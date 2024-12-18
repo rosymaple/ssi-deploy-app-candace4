@@ -85,9 +85,8 @@ router.patch('/students/:id', function (req, res, next) {
         // delete request to /api/students/4 will delete student with id 4
 
         const studentID = req.params.id
-        Student.destroy( { where: { id : studentID } } ).then( (result) => {
+        Student.destroy( { where: { id : studentID } } ).then( (rowsDeleted) => {
 
-            const rowsDeleted = result[0]
             if (rowsDeleted === 1) {
                 return res.send('Student deleted')
             } else {    // 0 rows deleted - this message will appear
