@@ -47,7 +47,7 @@ router.patch('/students/:id', function (req, res, next) {
     // Student.update will find the row in the database that matches that student ID
     // then will set that data to whatever is in the updated student row
     console.log(updatedStudent)
-    Student.update( updatedStudent, { where: { id: studentID } } ).then( (result) => {
+    Student.update(updatedStudent, {where: { id: studentID}}).then((result) => {
         // when .then function is called, sequelize returns a result object...
         // that has information about how many rows were updated, etc
         // student id that doesnt exist in our database error handling
@@ -62,15 +62,42 @@ router.patch('/students/:id', function (req, res, next) {
             return res.status(404).send('Student not found')
         }
 
-    }).catch( err => {      // database errors like can't connect, database reports error, etc
-        // invalid data in the updatedStudent like no name
-        next(err)
+    }).catch(err => {      // database errors like can't connect, database reports error, etc
+        // 400 = bad request - client is sending a request our server can't fulfill
+        if (err instanceof database.Sequelize.ValidationError) {
+            const messages = err.errors.map(e => e.message)
+            return res.status(400).json(messages)
+        } else {
+            // some other error
+            //
+            next(err)
+        }
     })
+})
 
     // what kinds of errors can happen when we use this route handler?
     // ...
     // database problems - app can't connect to database
-})
+
+    // don't forget the s in exports
+
+    router.delete('/students/:id', function(req, res, next){
+        // delete request to /api/students/4 will delete student with id 4
+
+        const studentID = req.params.id
+        Student.destroy( { where: { id : studentID } } ).then( (result) => {
+
+            const rowsDeleted = result[0]
+            if (rowsDeleted === 1) {
+                return res.send('Student deleted')
+            } else {    // 0 rows deleted - this message will appear
+                return res.status(404).send('Student not found')
+            }
+
+        }).catch ( err => {
+        // no validation needed, they are either here or not here
+            return next(err)
+        })
+    })
 
 module.exports = router
-// don't forget the s in exports

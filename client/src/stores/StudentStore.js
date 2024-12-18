@@ -25,6 +25,8 @@ export const useStudentStore = defineStore('students', () => {
         studentAPI.get().then( students => {     // students is the JSON response from the API
             // sortedStudents is our studentList but sorted
           sortedStudents.value = students
+        }).catch( err => {
+            console.log(err)
         })
         // make sure this function is called when the app loads, go to App.vue and import onMounted from vue
         // automatically called when a component is first loaded on a screen
@@ -43,13 +45,23 @@ export const useStudentStore = defineStore('students', () => {
 
     function deleteStudent(studentToDelete) {
         // TODO: make an api request
+        const deleteStudentAPI = mande(`/api/students/${studentToDelete.id}`)
+        deleteStudentAPI.delete().then( () => {
+            mostRecentStudent.value = {}
+            getAllStudents()
+        }).catch( err => {
+            console.log(err)
+        })
     }
 
     function arrivedOrLeft(student) {
         // TODO make api request
         const editStudentAPI = mande(`/api/students/${student.id}`)
         editStudentAPI.patch(student).then( () => {
+            mostRecentStudent.value = {}
             getAllStudents()
+        }).catch( err => {
+            console.log(err)
         })
     }
 

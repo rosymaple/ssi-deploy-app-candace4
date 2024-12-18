@@ -29,7 +29,7 @@ module.exports = (sequelize, DataTypes) => {
     // create or update table in the database
     // force = true is an object meaning always update everytime the app restarts
     // console.log optional but will print if database is updated
-    Student.sync( { force: true } ).then( () => {
+    Student.sync( { force: false } ).then( () => {
         console.log('Synced student table')
     })
 

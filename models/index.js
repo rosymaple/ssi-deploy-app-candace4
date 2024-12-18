@@ -17,7 +17,8 @@ const config = configJson[env] // read the DB configuration object for 'developm
 const sequelize = new Sequelize(config)
 
 const database = {
-//
+//initialize sequelize twice
+    //one in lowercase and one in uppercase
     sequelize: sequelize,
     Sequelize: Sequelize,
 }
